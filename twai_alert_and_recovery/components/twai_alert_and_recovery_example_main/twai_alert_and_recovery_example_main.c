@@ -107,7 +107,7 @@ static void ctrl_task(void *arg)
     vTaskDelete(NULL);
 }
 
-void app_main(void)
+void twai_alert_and_recovery_example_main(void)
 {
     tx_task_sem = xSemaphoreCreateBinary();
     ctrl_task_sem = xSemaphoreCreateBinary();

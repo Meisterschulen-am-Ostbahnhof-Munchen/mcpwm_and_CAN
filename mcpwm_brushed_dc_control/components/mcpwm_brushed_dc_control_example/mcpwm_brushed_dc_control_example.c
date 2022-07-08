@@ -294,7 +294,7 @@ static void mcpwm_brushed_motor_expt_thread(void *arg)
 /**
  * @brief The main entry of this example
  */
-void app_main(void)
+void mcpwm_brushed_dc_control_example_main(void)
 {
     printf("Testing brushed motor with PID...\n");
     /* Create semaphore */
