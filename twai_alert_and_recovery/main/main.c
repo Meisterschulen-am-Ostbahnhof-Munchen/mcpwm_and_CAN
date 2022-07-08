@@ -9,9 +9,11 @@
 #include <stdio.h>
 #include "sdkconfig.h"
 
+extern void twai_alert_and_recovery_example_main(void);
+
 void app_main(void)
 {
     printf("Hello world!\n");
-
+    twai_alert_and_recovery_example_main();
 
 }

@@ -9,10 +9,11 @@
 #include <stdio.h>
 #include "sdkconfig.h"
 
+extern void mcpwm_brushed_dc_control_example_main(void);
 
 void app_main(void)
 {
     printf("Hello world!\n");
-
+    mcpwm_brushed_dc_control_example_main();
 
 }
