@@ -10,10 +10,12 @@
 #include "sdkconfig.h"
 
 extern void mcpwm_brushed_dc_control_example_main(void);
+extern void twai_alert_and_recovery_example_main(void);
 
 void app_main(void)
 {
     printf("Hello world!\n");
+    twai_alert_and_recovery_example_main();
     mcpwm_brushed_dc_control_example_main();
 
 }
