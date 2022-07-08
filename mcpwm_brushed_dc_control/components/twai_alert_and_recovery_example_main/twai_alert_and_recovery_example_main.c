@@ -121,6 +121,10 @@ void twai_alert_and_recovery_example_main(void)
 
     xSemaphoreGive(ctrl_task_sem);                  //Start control task
     vTaskDelay(pdMS_TO_TICKS(100));
+}
+
+void twai_alert_and_recovery_example_stop(void)
+{
     xSemaphoreTake(ctrl_task_sem, portMAX_DELAY);   //Wait for completion
 
     //Uninstall TWAI driver
