@@ -47,35 +47,19 @@ static const twai_message_t tx_msg = {.identifier = 0, .data_length_code = 0};
 
 static SemaphoreHandle_t tx_task_sem;
 static SemaphoreHandle_t ctrl_task_sem;
-static bool trigger_tx_error = false;
 
 /* --------------------------- Tasks and Functions -------------------------- */
 
-static void invert_tx_bits(bool enable)
-{
-    if (enable) {
-        //Inverts output of TX to trigger errors
-        esp_rom_gpio_connect_out_signal(TX_GPIO_NUM, TWAI_TX_IDX, true, false);
-    } else {
-        //Returns TX to default settings
-        esp_rom_gpio_connect_out_signal(TX_GPIO_NUM, TWAI_TX_IDX, false, false);
-    }
-}
 
 static void tx_task(void *arg)
 {
     xSemaphoreTake(tx_task_sem, portMAX_DELAY);
     while (1) {
         if (twai_transmit(&tx_msg, 0) == ESP_ERR_INVALID_STATE) {
+            vTaskDelay(pdMS_TO_TICKS(50));
             break;  //Exit TX task when bus-off state is reached
         }
-        if (trigger_tx_error) {
-            //Trigger a bit error in transmission by inverting GPIO
-            esp_rom_delay_us(ERR_DELAY_US);     //Wait until arbitration phase is over
-            invert_tx_bits(true);           //Trigger bit error for a few bits
-            esp_rom_delay_us(ERR_PERIOD_US);
-            invert_tx_bits(false);
-        }
+
         vTaskDelay(pdMS_TO_TICKS(50));
     }
     vTaskDelete(NULL);
@@ -91,12 +75,6 @@ static void ctrl_task(void *arg)
 
     //Prepare to trigger errors, reconfigure alerts to detect change in error state
     twai_reconfigure_alerts(TWAI_ALERT_ABOVE_ERR_WARN | TWAI_ALERT_ERR_PASS | TWAI_ALERT_BUS_OFF, NULL);
-    for (int i = 3; i > 0; i--) {
-        ESP_LOGW(EXAMPLE_TAG, "Trigger TX errors in %d", i);
-        vTaskDelay(pdMS_TO_TICKS(1000));
-    }
-    ESP_LOGI(EXAMPLE_TAG, "Trigger errors");
-    trigger_tx_error = true;
 
     while (1) {
         uint32_t alerts;
